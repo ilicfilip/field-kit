@@ -50,6 +50,8 @@ export function List({
 	const [expandedIndex, setExpandedIndex] = React.useState<number | null>(
 		items.length === 0 ? null : 0,
 	);
+	const expandedRef = React.useRef(expandedIndex);
+	expandedRef.current = expandedIndex;
 
 	const canAdd = max === undefined || items.length < max;
 	const canRemove = min === undefined || items.length > min;
@@ -73,13 +75,14 @@ export function List({
 			const next = [...itemsRef.current];
 			next.splice(index, 1);
 			updateItems(next);
-			if (expandedIndex === index) {
+			const exp = expandedRef.current;
+			if (exp === index) {
 				setExpandedIndex(null);
-			} else if (expandedIndex !== null && expandedIndex > index) {
-				setExpandedIndex(expandedIndex - 1);
+			} else if (exp !== null && exp > index) {
+				setExpandedIndex(exp - 1);
 			}
 		},
-		[updateItems, expandedIndex],
+		[updateItems],
 	);
 
 	const moveItem = React.useCallback(
@@ -89,13 +92,14 @@ export function List({
 			const next = [...itemsRef.current];
 			[next[index], next[target]] = [next[target], next[index]];
 			updateItems(next);
-			if (expandedIndex === index) {
+			const exp = expandedRef.current;
+			if (exp === index) {
 				setExpandedIndex(target);
-			} else if (expandedIndex === target) {
+			} else if (exp === target) {
 				setExpandedIndex(index);
 			}
 		},
-		[updateItems, expandedIndex],
+		[updateItems],
 	);
 
 	const updateField = React.useCallback(
@@ -197,7 +201,7 @@ export function List({
 											type="button"
 											className="px-1 py-0.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer bg-transparent border-none disabled:opacity-30 disabled:cursor-not-allowed"
 											disabled={index === 0}
-											onClick={() => moveItem(index, -1)}
+											onClick={(e) => { e.stopPropagation(); moveItem(index, -1); }}
 											aria-label="Move up"
 											title="Move up"
 										>
@@ -207,7 +211,7 @@ export function List({
 											type="button"
 											className="px-1 py-0.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer bg-transparent border-none disabled:opacity-30 disabled:cursor-not-allowed"
 											disabled={index === items.length - 1}
-											onClick={() => moveItem(index, 1)}
+											onClick={(e) => { e.stopPropagation(); moveItem(index, 1); }}
 											aria-label="Move down"
 											title="Move down"
 										>
@@ -220,7 +224,7 @@ export function List({
 									<button
 										type="button"
 										className="px-1.5 py-0.5 text-xs text-muted-foreground hover:text-destructive cursor-pointer bg-transparent border-none"
-										onClick={() => removeItem(index)}
+										onClick={(e) => { e.stopPropagation(); removeItem(index); }}
 										aria-label={`Remove ${itemLabel} ${index + 1}`}
 										title="Remove"
 									>
