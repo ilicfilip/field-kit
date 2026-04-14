@@ -1,0 +1,30 @@
+{
+	"name": "emdash-plugin-field-kit",
+	"version": "0.1.0",
+	"description": "Composable field widgets for EmDash CMS — object forms, lists, grids, and tag inputs for json fields",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"files": [
+		"src/"
+	],
+	"keywords": [
+		"emdash",
+		"field-kit",
+		"custom-fields",
+		"widgets",
+		"json-fields"
+	],
+	"license": "MIT",
+	"peerDependencies": {
+		"emdash": "*",
+		"react": "^18.0.0 || ^19.0.0"
+	},
+	"devDependencies": {
+		"@types/react": "^19.0.0",
+		"emdash": "*",
+		"react": "^19.0.0",
+		"typescript": "^5.6.0"
+	}
+}

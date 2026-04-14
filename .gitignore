@@ -1,0 +1,5 @@
+node_modules/
+dist/
+
+# Docs (spec is internal reference, not shipped)
+SPEC.md
