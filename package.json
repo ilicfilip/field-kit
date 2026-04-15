@@ -2,6 +2,11 @@
 	"name": "emdash-plugin-field-kit",
 	"version": "0.1.0",
 	"description": "Composable field widgets for EmDash CMS — object forms, lists, grids, and tag inputs for json fields",
+	"author": "Filip Ilic",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ilicfilip/field-kit"
+	},
 	"type": "module",
 	"exports": {
 		".": "./src/index.ts"
