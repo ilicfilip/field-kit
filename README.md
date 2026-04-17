@@ -94,7 +94,35 @@ Used by `object-form` and `list` in their `fields` array:
 
 `text`, `number`, `boolean`, `select`, `textarea`, `date`, `color`, `url`
 
-Each sub-field supports: `key`, `label`, `type`, `required`, `placeholder`, `helpText`, `defaultValue`. Number fields add `min`, `max`, `step`, `suffix`, `prefix`. Select fields add `options`. Textarea adds `rows`.
+Each sub-field supports: `key`, `label`, `type`, `required`, `placeholder`, `helpText`, `defaultValue`, `visibleWhen`. Number fields add `min`, `max`, `step`, `suffix`, `prefix`. Select fields add `options`. Textarea adds `rows`.
+
+### Conditional fields — `visibleWhen`
+
+Show a sub-field only when a sibling field matches a condition. Evaluated against the form object (in `object-form`) or the row object (in `list` — so each row is independent).
+
+```json
+{
+  "fields": [
+    { "key": "cooked", "label": "Cooked?", "type": "boolean" },
+    {
+      "key": "cookingTime",
+      "label": "Cooking time (min)",
+      "type": "number",
+      "visibleWhen": { "field": "cooked", "equals": true }
+    },
+    {
+      "key": "servedCold",
+      "label": "Served cold",
+      "type": "boolean",
+      "visibleWhen": { "field": "cooked", "notEquals": true }
+    }
+  ]
+}
+```
+
+Supported operators: `equals`, `notEquals`. Uses strict equality — `equals: 1` will not match `"1"`.
+
+Hidden fields stay in the DOM, so their values persist. Toggle a sibling, hide the field, save, toggle back — the original value is still there. `required` is ignored while hidden so it can't block save.
 
 ## Data shapes
 
