@@ -18,6 +18,21 @@ function normalizeSelectItems(
 }
 
 /**
+ * Wrap a label with a required asterisk. Kumo's `Field` wrapper marks
+ * non-required fields with "(optional)" but does not display `*` for
+ * required ones, so we add it ourselves to make the requirement obvious.
+ */
+function labelWithRequired(label: string, required: boolean | undefined): React.ReactNode {
+	if (!required) return label;
+	return (
+		<>
+			{label}
+			<span className="ml-0.5 text-kumo-danger">*</span>
+		</>
+	);
+}
+
+/**
  * Renders a single sub-field input based on its type definition.
  * Used by object-form and list widgets.
  */
@@ -30,7 +45,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 				<Input
 					id={fieldId}
 					type="text"
-					label={def.label}
+					label={labelWithRequired(def.label, def.required)}
 					description={def.helpText}
 					required={def.required}
 					placeholder={def.placeholder}
@@ -44,7 +59,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 				<Input
 					id={fieldId}
 					type="url"
-					label={def.label}
+					label={labelWithRequired(def.label, def.required)}
 					description={def.helpText}
 					required={def.required}
 					placeholder={def.placeholder ?? "https://"}
@@ -60,7 +75,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 				<Input
 					id={fieldId}
 					type="number"
-					label={prefixOrSuffix ? undefined : def.label}
+					label={prefixOrSuffix ? undefined : labelWithRequired(def.label, def.required)}
 					aria-labelledby={prefixOrSuffix ? labelId : undefined}
 					description={prefixOrSuffix ? undefined : def.helpText}
 					required={def.required}
@@ -125,7 +140,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 			const items = normalizeSelectItems(def.options);
 			return (
 				<Select
-					label={def.label}
+					label={labelWithRequired(def.label, def.required)}
 					description={def.helpText}
 					required={def.required}
 					placeholder={def.placeholder ?? "Select..."}
@@ -142,7 +157,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 			return (
 				<InputArea
 					id={fieldId}
-					label={def.label}
+					label={labelWithRequired(def.label, def.required)}
 					description={def.helpText}
 					required={def.required}
 					placeholder={def.placeholder}
@@ -157,7 +172,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 				<Input
 					id={fieldId}
 					type="date"
-					label={def.label}
+					label={labelWithRequired(def.label, def.required)}
 					description={def.helpText}
 					required={def.required}
 					value={typeof value === "string" ? value : ""}
@@ -204,7 +219,7 @@ export function SubField({ def, value, onChange }: SubFieldProps) {
 				<Input
 					id={fieldId}
 					type="text"
-					label={def.label}
+					label={labelWithRequired(def.label, def.required)}
 					value={typeof value === "string" ? String(value) : ""}
 					onChange={(e) => onChange(e.target.value)}
 				/>
