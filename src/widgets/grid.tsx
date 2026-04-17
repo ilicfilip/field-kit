@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Checkbox, Input, Select } from "@cloudflare/kumo";
 import type { FieldWidgetProps, GridAxisDef } from "../shared/types";
 import { normalizeGrid } from "../shared/utils";
 
@@ -68,9 +69,8 @@ export function Grid({
 	);
 
 	const toggleCell = React.useCallback(
-		(rowKey: string, colKey: string) => {
-			const current = !!dataRef.current[rowKey]?.[colKey];
-			const rowData = { ...dataRef.current[rowKey], [colKey]: !current };
+		(rowKey: string, colKey: string, next: boolean) => {
+			const rowData = { ...dataRef.current[rowKey], [colKey]: next };
 			onChange({ ...dataRef.current, [rowKey]: rowData });
 		},
 		[onChange],
@@ -80,14 +80,14 @@ export function Grid({
 		return (
 			<div>
 				{!minimal && (
-					<label className="text-sm font-medium leading-none mb-1.5 block">
+					<label className="mb-1.5 block text-sm font-medium text-kumo-default">
 						{label}
-						{required && <span className="text-destructive ml-0.5">*</span>}
+						{required && <span className="ml-0.5 text-kumo-danger">*</span>}
 					</label>
 				)}
-				<div className="rounded border border-destructive/50 bg-destructive/10 p-3 text-sm">
+				<div className="rounded-md bg-kumo-danger-tint/60 p-3 text-sm text-kumo-danger">
 					<p className="font-medium">Widget misconfigured</p>
-					<p className="mt-1 text-muted-foreground">
+					<p className="mt-1 opacity-80">
 						The field's <code>options.rows</code> and{" "}
 						<code>options.columns</code> arrays are required. Define them in
 						your seed file to use this widget.
@@ -100,23 +100,23 @@ export function Grid({
 	return (
 		<div>
 			{!minimal && (
-				<label className="text-sm font-medium leading-none mb-1.5 block">
+				<label className="mb-1.5 block text-sm font-medium text-kumo-default">
 					{label}
-					{required && <span className="text-destructive ml-0.5">*</span>}
+					{required && <span className="ml-0.5 text-kumo-danger">*</span>}
 				</label>
 			)}
 
-			<div className="overflow-x-auto rounded border border-input">
+			<div className="overflow-x-auto rounded-md ring ring-kumo-hairline">
 				<table className="w-full border-collapse text-sm">
 					<thead>
-						<tr className="border-b border-input bg-muted/40">
-							<th className="sticky left-0 z-10 bg-muted/40 px-3 py-2 text-left font-medium">
+						<tr className="border-b border-kumo-hairline bg-kumo-tint">
+							<th className="sticky left-0 z-10 bg-kumo-tint px-3 py-2 text-left font-medium text-kumo-default">
 								&nbsp;
 							</th>
 							{columns.map((col) => (
 								<th
 									key={col.key}
-									className="px-2 py-2 text-center font-medium"
+									className="px-2 py-2 text-center font-medium text-kumo-default"
 									title={col.label}
 								>
 									<div className="flex flex-col items-center gap-1">
@@ -143,11 +143,11 @@ export function Grid({
 								key={row.key}
 								className={
 									rowIdx % 2 === 0
-										? "border-t border-input"
-										: "border-t border-input bg-muted/20"
+										? "border-t border-kumo-hairline"
+										: "border-t border-kumo-hairline bg-kumo-tint/40"
 								}
 							>
-								<td className="sticky left-0 z-10 bg-inherit px-3 py-2 font-medium whitespace-nowrap">
+								<td className="sticky left-0 z-10 whitespace-nowrap bg-inherit px-3 py-2 font-medium text-kumo-default">
 									<div className="flex items-center gap-1.5">
 										{row.image && (
 											<img
@@ -188,7 +188,7 @@ export function Grid({
 			</div>
 
 			{helpText && (
-				<p className="mt-1.5 text-xs text-muted-foreground">{helpText}</p>
+				<p className="mt-1.5 text-xs text-kumo-subtle">{helpText}</p>
 			)}
 		</div>
 	);
@@ -200,7 +200,7 @@ interface CellInputProps {
 	options: SelectOption[];
 	rowKey: string;
 	colKey: string;
-	onToggle: (rowKey: string, colKey: string) => void;
+	onToggle: (rowKey: string, colKey: string, next: boolean) => void;
 	onUpdate: (rowKey: string, colKey: string, value: unknown) => void;
 	ariaLabel: string;
 }
@@ -218,31 +218,31 @@ function CellInput({
 	switch (type) {
 		case "toggle":
 			return (
-				<input
-					type="checkbox"
-					className="h-4 w-4 cursor-pointer rounded border border-input"
-					checked={!!value}
-					onChange={() => onToggle(rowKey, colKey)}
-					aria-label={ariaLabel}
-				/>
+				<div className="flex justify-center">
+					<Checkbox
+						aria-label={ariaLabel}
+						checked={!!value}
+						onCheckedChange={(next) => onToggle(rowKey, colKey, !!next)}
+					/>
+				</div>
 			);
 
 		case "text":
 			return (
-				<input
-					type="text"
-					className="w-full min-w-[4rem] rounded border border-input bg-transparent px-1.5 py-0.5 text-sm text-center"
+				<Input
+					size="sm"
+					aria-label={ariaLabel}
 					value={typeof value === "string" ? value : ""}
 					onChange={(e) => onUpdate(rowKey, colKey, e.target.value)}
-					aria-label={ariaLabel}
 				/>
 			);
 
 		case "number":
 			return (
-				<input
+				<Input
+					size="sm"
 					type="number"
-					className="w-full min-w-[3rem] rounded border border-input bg-transparent px-1.5 py-0.5 text-sm text-center"
+					aria-label={ariaLabel}
 					value={typeof value === "number" ? value : ""}
 					onChange={(e) =>
 						onUpdate(
@@ -251,27 +251,20 @@ function CellInput({
 							e.target.value === "" ? undefined : Number(e.target.value),
 						)
 					}
-					aria-label={ariaLabel}
 				/>
 			);
 
 		case "select":
 			return (
-				<select
-					className="rounded border border-input bg-transparent px-1 py-0.5 text-sm"
-					value={typeof value === "string" ? value : ""}
-					onChange={(e) =>
-						onUpdate(rowKey, colKey, e.target.value || undefined)
-					}
+				<Select
 					aria-label={ariaLabel}
-				>
-					<option value="">—</option>
-					{options.map((opt) => (
-						<option key={opt.value} value={opt.value}>
-							{opt.label}
-						</option>
-					))}
-				</select>
+					value={typeof value === "string" ? value : ""}
+					placeholder="—"
+					onValueChange={(v) =>
+						onUpdate(rowKey, colKey, (v as string) === "" ? undefined : v)
+					}
+					items={options}
+				/>
 			);
 
 		default:

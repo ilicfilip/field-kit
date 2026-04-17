@@ -1,4 +1,12 @@
 import * as React from "react";
+import { Button } from "@cloudflare/kumo";
+import {
+	CaretRight,
+	CaretUp,
+	CaretDown,
+	Plus,
+	X,
+} from "@phosphor-icons/react";
 import type { FieldWidgetProps, SubFieldDef } from "../shared/types";
 import { normalizeArray, normalizeObject, renderSummary } from "../shared/utils";
 import { SubField } from "../shared/sub-field";
@@ -127,14 +135,14 @@ export function List({
 		return (
 			<div>
 				{!minimal && (
-					<label className="text-sm font-medium leading-none mb-1.5 block">
+					<label className="mb-1.5 block text-sm font-medium text-kumo-default">
 						{label}
-						{required && <span className="text-destructive ml-0.5">*</span>}
+						{required && <span className="ml-0.5 text-kumo-danger">*</span>}
 					</label>
 				)}
-				<div className="rounded border border-destructive/50 bg-destructive/10 p-3 text-sm">
+				<div className="rounded-md bg-kumo-danger-tint/60 p-3 text-sm text-kumo-danger">
 					<p className="font-medium">Widget misconfigured</p>
-					<p className="mt-1 text-muted-foreground">
+					<p className="mt-1 opacity-80">
 						The field's <code>options.fields</code> array is empty or missing.
 						Define sub-fields in your seed file to use this widget.
 					</p>
@@ -146,18 +154,19 @@ export function List({
 	return (
 		<div>
 			{!minimal && (
-				<label className="text-sm font-medium leading-none mb-1.5 block">
+				<label className="mb-1.5 block text-sm font-medium text-kumo-default">
 					{label}
-					{required && <span className="text-destructive ml-0.5">*</span>}
-					<span className="ml-1.5 text-xs text-muted-foreground font-normal">
-						({items.length}{max !== undefined ? `/${max}` : ""})
+					{required && <span className="ml-0.5 text-kumo-danger">*</span>}
+					<span className="ml-1.5 text-xs font-normal text-kumo-subtle">
+						({items.length}
+						{max !== undefined ? `/${max}` : ""})
 					</span>
 				</label>
 			)}
 
-			<div className="rounded border border-input">
+			<div className="rounded-md ring ring-kumo-hairline">
 				{items.length === 0 && (
-					<div className="p-3 text-sm text-muted-foreground text-center">
+					<div className="p-3 text-center text-sm text-kumo-subtle">
 						No items yet
 					</div>
 				)}
@@ -167,29 +176,23 @@ export function List({
 					return (
 						<div
 							key={index}
-							className={`border-b border-input last:border-b-0 ${
-								isExpanded ? "bg-muted/20" : ""
+							className={`border-b border-kumo-hairline last:border-b-0 ${
+								isExpanded ? "bg-kumo-tint" : ""
 							}`}
 						>
-							{/* Row header */}
 							<div className="flex items-center gap-1 px-2 py-1.5">
 								<button
 									type="button"
-									className="flex-1 flex items-center gap-1.5 text-sm text-left cursor-pointer bg-transparent border-none p-0"
+									className="flex flex-1 cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-left text-sm text-kumo-default"
 									onClick={() =>
 										setExpandedIndex(isExpanded ? null : index)
 									}
 								>
-									<span
-										className="inline-block transition-transform text-xs"
-										style={{
-											transform: isExpanded
-												? "rotate(90deg)"
-												: "rotate(0deg)",
-										}}
-									>
-										&#9654;
-									</span>
+									<CaretRight
+										className={`h-3 w-3 shrink-0 transition-transform ${
+											isExpanded ? "rotate-90" : ""
+										}`}
+									/>
 									<span className={isExpanded ? "font-medium" : ""}>
 										{getSummary(item, index)}
 									</span>
@@ -197,45 +200,53 @@ export function List({
 
 								{sortable && (
 									<>
-										<button
-											type="button"
-											className="px-1 py-0.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer bg-transparent border-none disabled:opacity-30 disabled:cursor-not-allowed"
+										<Button
+											variant="ghost"
+											shape="square"
+											size="sm"
 											disabled={index === 0}
-											onClick={(e) => { e.stopPropagation(); moveItem(index, -1); }}
+											onClick={(e) => {
+												e.stopPropagation();
+												moveItem(index, -1);
+											}}
 											aria-label="Move up"
 											title="Move up"
-										>
-											&#9650;
-										</button>
-										<button
-											type="button"
-											className="px-1 py-0.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer bg-transparent border-none disabled:opacity-30 disabled:cursor-not-allowed"
+											icon={<CaretUp />}
+										/>
+										<Button
+											variant="ghost"
+											shape="square"
+											size="sm"
 											disabled={index === items.length - 1}
-											onClick={(e) => { e.stopPropagation(); moveItem(index, 1); }}
+											onClick={(e) => {
+												e.stopPropagation();
+												moveItem(index, 1);
+											}}
 											aria-label="Move down"
 											title="Move down"
-										>
-											&#9660;
-										</button>
+											icon={<CaretDown />}
+										/>
 									</>
 								)}
 
 								{canRemove && (
-									<button
-										type="button"
-										className="px-1.5 py-0.5 text-xs text-muted-foreground hover:text-destructive cursor-pointer bg-transparent border-none"
-										onClick={(e) => { e.stopPropagation(); removeItem(index); }}
+									<Button
+										variant="ghost"
+										shape="square"
+										size="sm"
+										onClick={(e) => {
+											e.stopPropagation();
+											removeItem(index);
+										}}
 										aria-label={`Remove ${itemLabel} ${index + 1}`}
 										title="Remove"
-									>
-										&times;
-									</button>
+										icon={<X />}
+									/>
 								)}
 							</div>
 
-							{/* Expanded sub-fields */}
 							{isExpanded && (
-								<div className="space-y-3 px-3 pb-3 pt-1 border-t border-input">
+								<div className="space-y-3 border-t border-kumo-hairline px-3 pb-3 pt-2">
 									{fields.map((field) => (
 										<SubField
 											key={field.key}
@@ -254,17 +265,19 @@ export function List({
 			</div>
 
 			{canAdd && (
-				<button
-					type="button"
-					className="mt-2 inline-flex items-center gap-1 rounded-md border border-input bg-transparent px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-muted/50"
+				<Button
+					variant="outline"
+					size="sm"
+					className="mt-2"
 					onClick={addItem}
+					icon={<Plus />}
 				>
-					+ Add {itemLabel}
-				</button>
+					Add {itemLabel}
+				</Button>
 			)}
 
 			{helpText && (
-				<p className="mt-1.5 text-xs text-muted-foreground">{helpText}</p>
+				<p className="mt-1.5 text-xs text-kumo-subtle">{helpText}</p>
 			)}
 		</div>
 	);

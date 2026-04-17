@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Badge, Button } from "@cloudflare/kumo";
+import { X } from "@phosphor-icons/react";
 import type { FieldWidgetProps } from "../shared/types";
 import { normalizeTags } from "../shared/utils";
 
@@ -100,34 +102,37 @@ export function Tags({
 	return (
 		<div>
 			{!minimal && (
-				<label className="text-sm font-medium leading-none mb-1.5 block">
+				<label className="mb-1.5 block text-sm font-medium text-kumo-default">
 					{label}
-					{required && <span className="text-destructive ml-0.5">*</span>}
+					{required && <span className="ml-0.5 text-kumo-danger">*</span>}
 				</label>
 			)}
 
-			<div className="flex flex-wrap items-center gap-1.5 rounded-md border border-input bg-transparent p-1.5 min-h-[2.25rem]">
+			<div className="flex min-h-9 flex-wrap items-center gap-1.5 rounded-md bg-kumo-base p-1.5 ring ring-kumo-hairline focus-within:ring-kumo-hairline">
 				{tags.map((tag, i) => (
 					<span
 						key={`${tag}-${i}`}
-						className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-sm"
+						className="inline-flex items-center gap-1"
 					>
-						{tag}
-						<button
-							type="button"
-							className="inline-flex items-center justify-center h-4 w-4 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted-foreground/20 cursor-pointer bg-transparent border-none p-0 text-xs leading-none"
-							onClick={() => removeTag(i)}
-							aria-label={`Remove ${tag}`}
-						>
-							&times;
-						</button>
+						<Badge variant="secondary">
+							<span className="mr-1">{tag}</span>
+							<Button
+								variant="ghost"
+								shape="circle"
+								size="xs"
+								aria-label={`Remove ${tag}`}
+								onClick={() => removeTag(i)}
+								icon={<X />}
+							/>
+						</Badge>
 					</span>
 				))}
 
 				{!atLimit && (
 					<input
+						id={id}
 						type="text"
-						className="flex-1 min-w-[8rem] bg-transparent border-none outline-none text-sm p-1 placeholder:text-muted-foreground"
+						className="min-w-32 flex-1 border-none bg-transparent p-1 text-sm text-kumo-default outline-none placeholder:text-kumo-subtle"
 						value={input}
 						placeholder={tags.length === 0 ? placeholder : ""}
 						list={suggestions.length > 0 ? datalistId : undefined}
@@ -151,11 +156,11 @@ export function Tags({
 			)}
 
 			{helpText && (
-				<p className="mt-1.5 text-xs text-muted-foreground">{helpText}</p>
+				<p className="mt-1.5 text-xs text-kumo-subtle">{helpText}</p>
 			)}
 
 			{max !== undefined && (
-				<p className="mt-1 text-xs text-muted-foreground">
+				<p className="mt-1 text-xs text-kumo-subtle">
 					{tags.length}/{max}
 				</p>
 			)}

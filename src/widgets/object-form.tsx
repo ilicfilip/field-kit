@@ -1,4 +1,5 @@
 import * as React from "react";
+import { CaretRight } from "@phosphor-icons/react";
 import type { FieldWidgetProps, SubFieldDef } from "../shared/types";
 import { normalizeObject } from "../shared/utils";
 import { SubField } from "../shared/sub-field";
@@ -51,14 +52,14 @@ export function ObjectForm({
 		return (
 			<div>
 				{!minimal && (
-					<label className="text-sm font-medium leading-none mb-1.5 block">
+					<label className="mb-1.5 block text-sm font-medium text-kumo-default">
 						{label}
-						{required && <span className="text-destructive ml-0.5">*</span>}
+						{required && <span className="ml-0.5 text-kumo-danger">*</span>}
 					</label>
 				)}
-				<div className="rounded border border-destructive/50 bg-destructive/10 p-3 text-sm">
+				<div className="rounded-md bg-kumo-danger-tint/60 p-3 text-sm text-kumo-danger">
 					<p className="font-medium">Widget misconfigured</p>
-					<p className="mt-1 text-muted-foreground">
+					<p className="mt-1 opacity-80">
 						The field's <code>options.fields</code> array is empty or missing.
 						Define sub-fields in your seed file to use this widget.
 					</p>
@@ -72,22 +73,21 @@ export function ObjectForm({
 			{!minimal && (
 				<button
 					type="button"
-					className="flex items-center gap-1.5 text-sm font-medium leading-none mb-2 cursor-pointer bg-transparent border-none p-0"
+					className="mb-2 flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-sm font-medium text-kumo-default"
 					onClick={() => setIsOpen((o) => !o)}
 				>
-					<span
-						className="inline-block transition-transform text-xs"
-						style={{ transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}
-					>
-						&#9654;
-					</span>
+					<CaretRight
+						className={`h-3 w-3 shrink-0 transition-transform ${
+							isOpen ? "rotate-90" : ""
+						}`}
+					/>
 					{label}
-					{required && <span className="text-destructive ml-0.5">*</span>}
+					{required && <span className="text-kumo-danger">*</span>}
 				</button>
 			)}
 
 			{isOpen && (
-				<div className="space-y-3 rounded border border-input p-3">
+				<div className="space-y-3 rounded-md p-3 ring ring-kumo-hairline">
 					{fields.map((field) => (
 						<SubField
 							key={field.key}
@@ -100,7 +100,7 @@ export function ObjectForm({
 			)}
 
 			{helpText && (
-				<p className="mt-1.5 text-xs text-muted-foreground">{helpText}</p>
+				<p className="mt-1.5 text-xs text-kumo-subtle">{helpText}</p>
 			)}
 		</div>
 	);
