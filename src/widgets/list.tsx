@@ -255,6 +255,7 @@ export function List({
 											onChange={(v) =>
 												updateField(index, field.key, v)
 											}
+											siblings={item}
 										/>
 									))}
 								</div>

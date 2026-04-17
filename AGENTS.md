@@ -48,6 +48,7 @@ Three layers connect seed config to rendered UI:
 - **Data normalization**: Every widget normalizes incoming `value` defensively (handles `undefined`, wrong types, legacy formats). Normalization functions live in `src/shared/utils.ts`.
 - **No nesting**: Sub-fields are flat primitives (text, number, boolean, select, textarea, date, color, url). For deeper structures, use multiple `json` fields or Portable Text.
 - **Refs for callbacks**: Widgets use `useRef` to hold current data so `useCallback` closures don't go stale.
+- **Conditional fields stay in the DOM**: `SubField` hides fields whose `visibleWhen` fails via `display:none` rather than omitting them, so the value stays in component state and round-trips through save. `required` is stripped on hidden inputs so HTML5 validation doesn't block save.
 
 ## Peer dependencies
 

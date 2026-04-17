@@ -94,6 +94,7 @@ export function ObjectForm({
 							def={field}
 							value={data[field.key]}
 							onChange={(v) => handleFieldChange(field.key, v)}
+							siblings={data}
 						/>
 					))}
 				</div>
